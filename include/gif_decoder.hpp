@@ -105,6 +105,57 @@ struct gif_header {
     std::uint8_t aspect_ratio = 0;
 };
 
+/**
+ * @brief The rgba_color struct
+ *
+ * Struct to contain color in RGBA format
+ */
+struct rgba_color {
+    /// @brief r Amount of red
+    std::uint8_t r = 0;
+    /// @brief g Amount of green
+    std::uint8_t g = 0;
+    /// @brief b Amount of blue
+    std::uint8_t b = 0;
+
+    /// @brief a Amount of ALPHA chanell
+    double a = 1.f;
+};
+
+/**
+ * @brief The frame_descriptor struct
+ *
+ * This sctruct describes frame (Its specifications)
+ */
+struct frame_descriptor {
+    /// @brief left Indent to the left of the frame (in pixels). Calculated from firs 4 bytes (reverse)
+    std::uint16_t left = 0;
+    /// @brief top Indent to the top of the frame (in pixels). Calculated from next 4 bytes (reverse)
+    std::uint16_t top = 0;
+
+    /// @brief width Frame width (in pixels). Calculated from next 4 bytes
+    std::uint16_t width = 0;
+    /// @brief height Frame height (in pixels). Calculated from next 4 bytes
+    std::uint16_t height = 0;
+
+    /// @brief use_ctl Does the gif use lct. Calculated from next bit
+    bool use_lct = false;
+    /// @brief is_interlaced Which interlacin method in use. Calculated from next bit
+    bool is_interlaced = false;
+
+    /// @brief sort_flag If it enabled colors sorted by important less. Calculated from next bit
+    bool sort_flag = false;
+
+    /// Here is 2 reserved bits
+
+    /// @brief lct_size Contains size of lct (if it was enabled)
+    std::uint8_t lct_size = 0;
+};
+
+class gif_frame {
+public:
+};
+
 class gif_decoder {
 public:
     gif_decoder(const std::string & file_name = "");

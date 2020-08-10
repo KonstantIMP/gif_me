@@ -44,11 +44,14 @@ enum GIF_EXTENSION_TYPE : std::uint8_t {
 
 /// Disposal method types
 enum DISPOSAL_METHOD : std::uint8_t {
-    NO_DISPOSAL   = 0,  ///< Don't do anything
-    NOT_DISPOS    = 1,  ///< Draw onto another frame
-    RESTORE_BACK  = 2,  ///< Restore baskground before drawing
-    RESTORE_PREV  = 3,  ///< Restore gif place before drawing
-    TO_BE_DEFINED = 4   ///< Not defined for now (by RFC)
+    NO_DISPOSAL     = 0,  ///< Don't do anything
+    NOT_DISPOS      = 1,  ///< Draw onto another frame
+    RESTORE_BACK    = 2,  ///< Restore baskground before drawing
+    RESTORE_PREV    = 3,  ///< Restore gif place before drawing
+    TO_BE_DEFINED0  = 4,  ///< Not defined for now (by RFC)
+    TO_BE_DEFINED1  = 5,  ///< Not defined for now (by RFC)
+    TO_BE_DEFINED2  = 6,  ///< Not defined for now (by RFC)
+    TO_BE_DEFINED3  = 7,  ///< Not defined for now (by RFC)
 };
 
 /**
@@ -226,18 +229,128 @@ protected:
  * Child class for KonstantIMP::gif_extension for containing graphic control extensions
  */
 class graphic_extension : public gif_extension {
-    graphic_extension();
+    /**
+     * @brief graphic_extension
+     *
+     * Standart constructor. It zeroes data and set extension type as GRAPHIC_EXTENSION
+     */
+    graphic_extension() : gif_extension(), dis_met(NO_DISPOSAL), user_input(false),
+    transparency(true), delay(10), transparency_index(0) {ext_type = GRAPHIC_EXTENSION;}
 
-    graphic_extension(const gif_extension *);
+    /**
+     * @brief graphic_extension
+     *
+     * Constructor for creating KonstantIMP::graphic_extension from parent KonstantIMP::gif_extension (usefull for simple work with data)
+     *
+     * @param[in] gif_parent Parent object for getting data
+     *
+     * @throw std::runtime_error if parent extension type is not GRAPHIC_EXTENSION
+     */
+    graphic_extension(const gif_extension * gif_parent);
 
+    /**
+     * @brief ~graphic_extension
+     *
+     * Simple destructor for data clear
+     */
     virtual ~graphic_extension();
 
+    /**
+     * @brief read_data
+     *
+     * Method to fill extension data (disposal method, user input flag, transparency and delay) from file stream
+     *
+     * @param[in] fin_gif std::ifstream object for reading from .gif
+     *
+     * @throw std::runtime_error If file is incorrect
+     */
     virtual void read_data(std::ifstream & fin_gif);
 
+    /**
+     * @brief get_data
+     *
+     * Method to get extensions data (comment message).
+     * First symbol - disposal method
+     * Second symbol - user input flag
+     * Third symbol - transparency flag
+     * Next 3 characters(may start from 0) - delay (need be /100)
+     * Next number - background color index
+     *
+     * @return String with extension data (It is formatted message for this class)
+     */
     virtual std::string get_data() const;
 
-private:
+    /**
+     * @brief get_disposal
+     *
+     * Getter for disposal method
+     *
+     * @return disposal method type from enum DISPOSAL_METHOD
+     */
+    inline DISPOSAL_METHOD get_disposal() const {
+        return dis_met;
+    }
 
+    /**
+     * @brief is_user_input
+     *
+     * Getter for user input flag
+     *
+     * @return true If user need do something
+     * @return false If user doesn't need anything
+     */
+    inline bool is_user_input() const {
+        return user_input;
+    }
+
+    /**
+     * @brief is_transparency
+     *
+     * Getter for transparency flag
+     *
+     * @return true If background is transparency
+     * @return flase in another case
+     */
+    inline bool is_transparency() const {
+        return transparency;
+    }
+
+    /**
+     * @brief get_delay
+     *
+     * Getter for delay value
+     *
+     * @return delay value (you don't need /100)
+     */
+    inline double get_delay() const {
+        return delay / 100;
+    }
+
+    /**
+     * @brief get_transparency_index
+     *
+     * Getter for transparency index
+     *
+     * @return transparency index
+     */
+    inline std::uint8_t get_transparency_index() const {
+        return transparency_index;
+    }
+
+private:
+    /// @brief dis_met Constains disposal method
+    DISPOSAL_METHOD dis_met;
+
+    /// @brief user_input Contains user input flag
+    bool user_input;
+    /// @brief transparency Contains transparency flag
+    bool transparency;
+
+    /// @brief It is delay time (need /100)
+    std::uint8_t delay;
+
+    /// @brief transparency_index Color index for background (if transparency)
+    std::uint8_t transparency_index;
 };
 
 /**

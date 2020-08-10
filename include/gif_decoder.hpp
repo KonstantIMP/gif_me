@@ -36,10 +36,19 @@ enum GIF_BLOCK_TYPE : std::uint8_t {
 /// Extension types enumeration
 enum GIF_EXTENSION_TYPE : std::uint8_t {
     PLAITEXT_EXTENSION = 0x01,  ///< Extension is a plain text
-    IMAGE_EXTENSION    = 0xf9,  ///< It is an extension for work with images
+    GRAPHIC_EXTENSION  = 0xf9,  ///< It is an extension for work with images
     COMMENT_EXTENSION  = 0xfe,  ///< Extension is a Comment
     PROGRAM_EXTENSION  = 0xff,  ///< Extension get an info for an app
     UNREAL_EXTENSION   = 0x00   ///< Undefined extension type
+};
+
+/// Disposal method types
+enum DISPOSAL_METHOD : std::uint8_t {
+    NO_DISPOSAL   = 0,  ///< Don't do anything
+    NOT_DISPOS    = 1,  ///< Draw onto another frame
+    RESTORE_BACK  = 2,  ///< Restore baskground before drawing
+    RESTORE_PREV  = 3,  ///< Restore gif place before drawing
+    TO_BE_DEFINED = 4   ///< Not defined for now (by RFC)
 };
 
 /**
@@ -212,6 +221,26 @@ protected:
 };
 
 /**
+ * @brief The graphic_extension class
+ *
+ * Child class for KonstantIMP::gif_extension for containing graphic control extensions
+ */
+class graphic_extension : public gif_extension {
+    graphic_extension();
+
+    graphic_extension(const gif_extension *);
+
+    virtual ~graphic_extension();
+
+    virtual void read_data(std::ifstream & fin_gif);
+
+    virtual std::string get_data() const;
+
+private:
+
+};
+
+/**
  * @brief The comment_extension class
  *
  * Child class for KonstantIMP::gif_extension for containing comment extensions
@@ -230,8 +259,10 @@ class comment_extension : public gif_extension {
      * Constructor for creating KonstantIMP::comment_extension from parent KonstantIMP::gif_extension (usefull for simple work with data)
      *
      * @param[in] gif_parent Parent object for getting data
+     *
+     * @throw std::runtime_error if parent extension type is not COMMENT_EXTENSION
      */
-    comment_extension(const gif_extension * gif_parent) : gif_extension(), comment_msg(gif_parent->get_data()) {ext_type = COMMENT_EXTENSION;}
+    comment_extension(const gif_extension * gif_parent);
 
     /**
      * @brief ~comment_extension
@@ -273,6 +304,8 @@ private:
     /// @brief comment_msg std::string for containing comment message
     std::string comment_msg;
 };
+
+
 
 class gif_frame {
 public:

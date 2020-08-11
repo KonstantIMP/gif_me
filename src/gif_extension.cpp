@@ -255,4 +255,70 @@ std::string plaintext_extension::get_data() const {
     return result + text_data;
 }
 
+application_extension::application_extension(const gif_extension * gif_parent) :
+    gif_extension(), app_name(""), app_code(""), app_data() {
+    //// Setting extension type
+    ext_type = PROGRAM_EXTENSION;
+
+    //// Checking extension type
+    if(gif_parent->get_extension_type() != PROGRAM_EXTENSION)
+        throw std::runtime_error("Parent objects type is not PROGRAM_EXTENSION");
+
+    //// Temp string
+    std::string temp_data = gif_parent->get_data();
+
+    //// Setting app info
+    app_name = temp_data.substr(0, 8);
+    app_code = temp_data.substr(8, 3);
+
+    //// Adding information
+    temp_data = temp_data.substr(8);
+    temp_data = temp_data.substr(3);
+    for(auto & iter : temp_data) app_data.push_back(iter);
+}
+
+void application_extension::read_data(std::ifstream & fin_gif) {
+    //// Temp storage
+    char temp_byte = 0x00;
+
+    //// Block size checking
+    fin_gif.read(&temp_byte, 1);
+    if(temp_byte != 11) throw std::runtime_error("Data block of PROGRAM_EXTENSION mest exist from 11 bytes");
+
+    //// Reading application name
+    app_name = "";
+    for(std::size_t i{0}; i < 8; i++) {
+        fin_gif.read(&temp_byte, 1);
+        app_name += temp_byte;
+    }
+
+    //// Reading application code
+    app_code = "";
+    for(std::size_t i{0}; i < 3; i++) {
+        fin_gif.read(&temp_byte, 1);
+        app_code += temp_byte;
+    }
+
+    //// Checking data block size
+    fin_gif.read(&temp_byte, 1);
+    for(std::size_t i{0}; i < static_cast<std::size_t>(temp_byte); i++) {
+        fin_gif.read(&temp_byte, 1);
+        app_data.push_back(temp_byte);
+    }
+
+    //// Terminate check
+    fin_gif.read(&temp_byte, 1);
+    if(temp_byte != 0x00) throw std::runtime_error("Extension must be terminated by 0x00");
+}
+
+std::string application_extension::get_data() const {
+    //// Resulted string
+    std::string result = app_name + app_code;
+
+    //// Adding data to end
+    for(auto & iter : app_data) result += iter;
+
+    return result;
+}
+
 };

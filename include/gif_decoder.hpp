@@ -603,6 +603,109 @@ private:
     std::string text_data;
 };
 
+/**
+ * @brief The application_extension class
+ *
+ * Child class for KonstantIMP::gif_extension for containing application extensions
+ */
+class application_extension : public gif_extension {
+public:
+    /**
+     * @brief application_extension
+     *
+     * Standart construct zeroes data and set extension typ
+     */
+    application_extension() : gif_extension(), app_name(""), app_code(""), app_data() {
+        ext_type = PROGRAM_EXTENSION;
+    }
+
+    /**
+     * @brief plaintext_extension
+     *
+     * Constructor for creating KonstantIMP::plaintext_extension from parent KonstantIMP::gif_extension (usefull for simple work with data)
+     *
+     * @param[in] gif_parent Parent object for getting data
+     *
+     * @throw std::runtime_error if parent extension type is not PLAINTEXT_EXTENSION
+     */
+    application_extension(const gif_extension * gif_parent);
+
+    /**
+     * @brief ~application_extension
+     *
+     * Standart destructor to clear data
+     */
+    virtual ~application_extension() {
+        app_name = app_code = "";
+        app_data.clear();
+    }
+
+    /**
+     * @brief read_data
+     *
+     * Method to fill extension data  from file stream
+     *
+     * @param[in] fin_gif std::ifstream object for reading from .gif
+     *
+     * @throw std::runtime_error If file is incorrect
+     */
+    virtual void read_data(std::ifstream & fin_gif);
+
+    /**
+     * @brief get_data
+     *
+     * First 8 symbols - app name
+     * Next 3 symbols - app id
+     * Another characters - app info
+     *
+     * @return String with extension data (It is formatted for this class)
+     */
+    virtual std::string get_data() const;
+
+    /**
+     * @brief get_app_name
+     *
+     * App name getter
+     *
+     * @return app_name value
+     */
+    inline std::string get_app_name() const {
+        return app_name;
+    }
+
+    /**
+     * @brief get_app_code
+     *
+     * App code getter
+     *
+     * @return app_code value
+     */
+    inline std::string get_app_code() const {
+        return app_code;
+    }
+
+    /**
+     * @brief get_app_data_ref
+     *
+     * App data getter
+     *
+     * @return Ref to vector with app data
+     */
+    inline std::vector<char> & get_app_data_ref() const {
+        return const_cast<std::vector<char> &>(app_data);
+    }
+
+private:
+    //// Application name
+    std::string app_name;
+    //// Application ID code
+    std::string app_code;
+
+    //// Data fro application
+    std::vector<char> app_data;
+};
+
+
 class gif_frame {
 public:
 };

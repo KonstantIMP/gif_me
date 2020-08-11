@@ -418,7 +418,190 @@ private:
     std::string comment_msg;
 };
 
+/**
+ * @brief The plaintext_extension class
+ *
+ * Child class for KonstantIMP::gif_extension for containing plain text extensions
+ */
+class plaintext_extension : public gif_extension {
+    /**
+     * @brief plaintext_extension
+     *
+     * Standart constructor zeroes data and set extension type as PLAINTEXT_EXTENSION
+     */
+    plaintext_extension() : gif_extension(), left_pos(0), top_pos(0), grid_width(0), grid_height(0),
+    cell_width(0), cell_height(0), color_index(0), background_index(0), text_data("") {ext_type = PLAITEXT_EXTENSION;}
 
+    /**
+     * @brief plaintext_extension
+     *
+     * Constructor for creating KonstantIMP::plaintext_extension from parent KonstantIMP::gif_extension (usefull for simple work with data)
+     *
+     * @param[in] gif_parent Parent object for getting data
+     *
+     * @throw std::runtime_error if parent extension type is not PLAINTEXT_EXTENSION
+     */
+    plaintext_extension(const gif_extension * gif_parent);
+
+    /**
+     * @brief ~plaintext_extension
+     *
+     * Clear extension data (set all parametrs as 0)
+     */
+    virtual ~plaintext_extension();
+
+    /**
+     * @brief read_data
+     *
+     * Method to fill extension data  from file stream
+     *
+     * @param[in] fin_gif std::ifstream object for reading from .gif
+     *
+     * @throw std::runtime_error If file is incorrect
+     */
+    virtual void read_data(std::ifstream & fin_gif);
+
+    /**
+     * @brief get_data
+     *
+     * Method to get extensions data
+     * Fist 3 characters - left_pos
+     * Next 3 characters - top_pos
+     * Next 3 characters - grid_width
+     * Next 3 characters - grid_height
+     * Next 3 characters - cell_width
+     * Next 3 characters - cell_height
+     * Next 3 characters - color_index
+     * Next 3 characters - background_index
+     * Another characters - text_data
+     *
+     * @return String with extension data (It is formatted for this class)
+     */
+    virtual std::string get_data() const;
+
+    /**
+     * @brief get_ltft_pos
+     *
+     * Text position getter
+     *
+     * @return left_pos value
+     */
+    inline std::uint8_t get_left_pos() const {
+        return left_pos;
+    }
+
+    /**
+     * @brief get_top_pos
+     *
+     * Text position getter
+     *
+     * @return top_pos value
+     */
+    inline std::uint8_t get_top_pos() const {
+        return top_pos;
+    }
+
+    /**
+     * @brief get_grid_width
+     *
+     * Grid paramet getter
+     *
+     * @return grid_width value
+     */
+    inline std::uint8_t get_grid_width() const {
+        return grid_width;
+    }
+
+    /**
+     * @brief get_grid_height
+     *
+     * Grid paramet getter
+     *
+     * @return grid_height value
+     */
+    inline std::uint8_t get_grid_height() const {
+        return grid_height;
+    }
+
+    /**
+     * @brief get_cell_width
+     *
+     * Cell parameter getter
+     *
+     * @return cell_width value
+     */
+    inline std::uint8_t get_cell_width() const {
+        return cell_width;
+    }
+
+    /**
+     * @brief get_cell_height
+     *
+     * Cell parameter getter
+     *
+     * @return cell_height value
+     */
+    inline std::uint8_t get_cell_height() const {
+        return cell_height;
+    }
+
+    /**
+     * @brief get_color_index
+     *
+     * Text color getter
+     *
+     * @return color_undex value
+     */
+    inline std::uint8_t get_color_index() const {
+        return color_index;
+    }
+
+    /**
+     * @brief get_background_index
+     *
+     * Background color index getter
+     *
+     * @return background_index value
+     */
+    inline std::uint8_t get_background_index() const {
+        return background_index;
+    }
+
+    /**
+     * @brief get_text_data
+     *
+     * Text data getter
+     *
+     * @return text_data value
+     */
+    inline std::string get_text_data() const {
+        return text_data;
+    }
+
+private:
+    //// Grid position (from left)
+    std::uint8_t left_pos;
+    //// Grid position (from top)
+    std::uint8_t top_pos;
+
+    //// Grid width (num of characters)
+    std::uint8_t grid_width;
+    //// Grid height (num of characters)
+    std::uint8_t grid_height;
+
+    //// Width of cell(one character)
+    std::uint8_t cell_width;
+    //// Height of cell(one character)
+    std::uint8_t cell_height;
+
+    //// Text color index container
+    std::uint8_t color_index;
+    //// Background color index container
+    std::uint8_t background_index;
+
+    //// String to contain text
+    std::string text_data;
+};
 
 class gif_frame {
 public:

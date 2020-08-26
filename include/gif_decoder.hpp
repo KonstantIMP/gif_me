@@ -12,6 +12,7 @@
 
 #include <fstream>
 
+#include <cstring>
 #include <string>
 
 #include <vector>
@@ -705,9 +706,78 @@ private:
     std::vector<char> app_data;
 };
 
-
+/**
+ * @brief The gif_frame class
+ *
+ * Class for containing one GIF frame
+ */
 class gif_frame {
 public:
+    /**
+     * @brief gif_frame
+     *
+     * Standart constructor. Zeroes data
+     */
+    gif_frame();
+
+    /**
+     * @brief ~gif_frame
+     *
+     * Standart destructor. Clears data after using
+     */
+    ~gif_frame();
+
+    /**
+     * @brief read_data
+     *
+     * Read data from file to the object
+     *
+     * @param[in] fin object for data reading
+     */
+    void read_data(std::ifstream & fin);
+
+    /**
+     * @brief get_frame_d
+     *
+     * Getter for frame_descriptor
+     *
+     * @return frame_d
+     */
+    inline frame_descriptor get_frame_d() const {
+        return frame_d;
+    }
+
+    /**
+     * @brief get_lwz_code_size
+     *
+     * LWZ minimum code size getter
+     *
+     * @return lwz_code_size
+     */
+    inline std::size_t get_lwz_code_size() const {
+        return lwz_code_size;
+    }
+
+    /**
+     * @brief get_lwz_data
+     *
+     * Compressed using LWZ frame image (in vector) getter
+     *
+     * @return lwz_data
+     */
+    inline std::vector<char> get_lwz_data() const {
+        return lwz_data;
+    }
+
+private:
+    //// Contains data about frame
+    frame_descriptor frame_d;
+
+    //// Contains minimum LWZ code size (in bits + 1)
+    std::size_t lwz_code_size;
+
+    //// Compressed using LWZ data
+    std::vector<char> lwz_data;
 };
 
 class gif_decoder {

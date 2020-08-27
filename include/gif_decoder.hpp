@@ -766,12 +766,23 @@ public:
     /**
      * @brief get_lwz_data
      *
-     * Compressed using LWZ frame image (in vector) getter
+     * Compressed using LWZ frame image (in vector) getter by ref
      *
-     * @return lwz_data
+     * @return lwz_data vector ref
      */
-    inline std::vector<char> get_lwz_data() const {
-        return lwz_data;
+    inline std::vector<char> & get_lwz_data_ref() const {
+        return const_cast<std::vector<char> &>(lwz_data);
+    }
+
+    /**
+     * @brief get_lct_ref
+     *
+     * Getter for lct vector (by ref)
+     *
+     * @return lct vector ref
+     */
+    inline std::vector<std::unique_ptr<rgba_color>> & get_lct_ref() const {
+        return const_cast<std::vector<std::unique_ptr<rgba_color>> &>(lct);
     }
 
 private:
@@ -781,7 +792,7 @@ private:
     //// Contains data about frame
     frame_descriptor frame_d;
 
-    //// Contains minimum LWZ code size (in bits + 1)
+    //// Contains minimum LWZ code size
     std::size_t lwz_code_size;
 
     //// Compressed using LWZ data

@@ -180,7 +180,20 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                 }
             }
             else if(data[0] == static_cast<char>(IMAGE_BLOCK)) {
-                std::clog << "IMAGE"; return;
+                if(debug) std::clog << "[DEBUG] Image block found\n\n";
+
+                gif_frame * frame = new gif_frame;
+                frame->read_data(gif); frames.push_back(std::unique_ptr<gif_frame>(frame));
+
+                if(debug) {
+                    std::clog << "\tFrame descriptor\n";
+                    std::clog << "\tLeft align : " << frame->get_frame_d().left << '\n';
+                    std::clog << "\tTop align : " << frame->get_frame_d().top << '\n';
+                    std::clog << "\tFrame width : " << frame->get_frame_d().width << '\n';
+                    std::clog << "\tFrame height : " << frame->get_frame_d().height << '\n';
+                }
+
+                return;
             }
             else if(data[0] == static_cast<char>(GIF_EOF_BLOCK)) {
                 if(debug) std::clog << "[DEBUG] GIF_EOF found. Decoded\n";

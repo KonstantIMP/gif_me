@@ -16,16 +16,16 @@ void gif_frame::read_data(std::ifstream & fin) {
     char data[3]; std::memset(data, 0, 3);
 
     fin.read(data, 2);
-    frame_d.left = (static_cast<std::uint16_t>(data[1]) << 8) | static_cast<std::uint16_t>(data[0]);
+    frame_d.left = static_cast<std::uint16_t>(((static_cast<std::uint16_t>(data[1]) & 0x00ff) << 8) | (static_cast<std::uint16_t>(data[0]) & 0x00ff));
 
     fin.read(data, 2);
-    frame_d.top = (static_cast<std::uint16_t>(data[1]) << 8) | static_cast<std::uint16_t>(data[0]);
+    frame_d.top = static_cast<std::uint16_t>(((static_cast<std::uint16_t>(data[1]) & 0x00ff) << 8) | (static_cast<std::uint16_t>(data[0]) & 0x00ff));
 
     fin.read(data, 2);
-    frame_d.width = (static_cast<std::uint16_t>(data[1]) << 8) | static_cast<std::uint16_t>(data[0]);
+    frame_d.width = static_cast<std::uint16_t>(((static_cast<std::uint16_t>(data[1]) & 0x00ff) << 8) | (static_cast<std::uint16_t>(data[0]) & 0x00ff));
 
     fin.read(data, 2);
-    frame_d.height = (static_cast<std::uint16_t>(data[1]) << 8) | static_cast<std::uint16_t>(data[0]);
+    frame_d.height = static_cast<std::uint16_t>(((static_cast<std::uint16_t>(data[1]) & 0x00ff) << 8) | (static_cast<std::uint16_t>(data[0]) & 0x00ff));
 
     std::memset(data, 0, 3); fin.read(data, 1);
     frame_d.use_lct = static_cast<bool>(0b10000000 & data[0]);

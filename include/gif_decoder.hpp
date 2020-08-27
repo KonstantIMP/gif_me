@@ -15,7 +15,11 @@
 #include <cstring>
 #include <string>
 
+#include <memory>
+
 #include <vector>
+
+#include <cmath>
 
 namespace KonstantIMP {
 
@@ -105,7 +109,7 @@ struct gif_header {
      *
      * Contains gct size. Calculated from next 3 bits (N) by gct_size = 2 ^ (M + 1)
      */
-    std::uint8_t gct_size = 0;
+    std::size_t gct_size = 0;
 
     /**
      * @brief back_color
@@ -230,6 +234,7 @@ protected:
  * Child class for KonstantIMP::gif_extension for containing graphic control extensions
  */
 class graphic_extension : public gif_extension {
+public:
     /**
      * @brief graphic_extension
      *
@@ -274,7 +279,7 @@ class graphic_extension : public gif_extension {
      * First symbol - disposal method
      * Second symbol - user input flag
      * Third symbol - transparency flag
-     * Next 3 characters(may start from 0) - delay (need be /100)
+     * Next 5 characters(may start from 0) - delay (need be /100)
      * Next number - background color index
      *
      * @return String with extension data (It is formatted message for this class)
@@ -323,8 +328,8 @@ class graphic_extension : public gif_extension {
      *
      * @return delay value (you don't need /100)
      */
-    inline double get_delay() const {
-        return delay / 100;
+    inline std::uint16_t get_delay() const {
+        return delay;
     }
 
     /**
@@ -348,7 +353,7 @@ private:
     bool transparency;
 
     /// @brief It is delay time (need /100)
-    std::uint8_t delay;
+    std::uint16_t delay;
 
     /// @brief transparency_index Color index for background (if transparency)
     std::uint8_t transparency_index;
@@ -770,6 +775,9 @@ public:
     }
 
 private:
+    //// GlobalColorTable (rgba)
+    std::vector<std::unique_ptr<rgba_color>> lct;
+
     //// Contains data about frame
     frame_descriptor frame_d;
 
@@ -780,17 +788,81 @@ private:
     std::vector<char> lwz_data;
 };
 
+/**
+ * @brief The gif_decoder class
+ *
+ * Need for simple gif decoding
+ */
 class gif_decoder {
 public:
-    gif_decoder(const std::string & file_name = "");
-    ~gif_decoder();
+    /**
+     * @brief gif_decoder
+     *
+     * Standart constructor
+     *
+     * @param[in] file_name optional gif path(Call open method)
+     */
+    gif_decoder(const std::string & file_name = "") {
+        this->clear();
+        if(file_name != "") open(file_name);
+    }
 
-    void open(const std::string & file_name);
+    /**
+     * @brief ~gif_decoder
+     *
+     * Clear data before using (allocate memory)
+     */
+    ~gif_decoder() {clear();};
 
-    void clear();
+    /**
+     * @brief open
+     *
+     * Open gif for decoding
+     *
+     * @param[in] file_name PATH to decoded gif file
+     */
+    void open(const std::string & file_name) {
+        if(gif.is_open()) throw std::runtime_error("GIF already has opened");
+        gif.open(file_name, std::ios_base::in | std::ios_base::binary);
+        if(!gif.is_open()) throw std::runtime_error("Can\'t open GIF");
+    }
+
+    /**
+     * @brief decode
+     *
+     * Starts decoding process
+     *
+     * @param[in] debug See debug output (std::clog)
+     */
+    void decode(const bool & debug = false);
+
+    /**
+     * @brief clear
+     *
+     * Clearing data after decoding
+     */
+    void clear() {
+        if(gif.is_open()) gif.close();
+        std::memset(&head, 0, sizeof (gif_header));
+        extensions.clear();
+        frames.clear();
+        gct.clear();
+    };
 
 private:
+    //// Extensions pointer vector
+    std::vector<std::unique_ptr<gif_extension>> extensions;
+    //// Frames pointer vector
+    std::vector<std::unique_ptr<gif_frame>> frames;
 
+    //// GlobalColorTable (rgba)
+    std::vector<std::unique_ptr<rgba_color>> gct;
+
+    //// File reading object
+    std::ifstream gif;
+
+    //// GIF Header(RFC)
+    gif_header head;
 };
 
 }

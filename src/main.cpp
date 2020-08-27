@@ -11,7 +11,11 @@ int main(int argc, char * argv[]) {
         return 0;
     }
 
-    std::cout << "Let\'s decode \"" << argv[1] << "\"\n";
+    std::cout << "Let\'s decode \"" << argv[1] << "\"\n\n";
+
+    KonstantIMP::gif_decoder first(argv[1]);
+
+    first.decode(true);
 
     return 0;
 }

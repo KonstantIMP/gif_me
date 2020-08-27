@@ -24,10 +24,10 @@ graphic_extension::graphic_extension(const gif_extension * gif_parent) : gif_ext
     transparency = static_cast<bool>(std::stoi(tmp_data.substr(2, 1)));
 
     //// Setting delay
-    delay = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(3, 3)));
+    delay = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(3, 5)));
 
     //// Setting transparency index
-    transparency_index = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(6)));
+    transparency_index = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(8)));
 }
 
 graphic_extension::~graphic_extension() {
@@ -53,7 +53,9 @@ void graphic_extension::read_data(std::ifstream & fin_gif) {
 
     //// Gettong delay time
     fin_gif.read(&temp_data, 1);
-    delay = static_cast<std::uint8_t>(temp_data);
+    delay = static_cast<std::uint16_t>(temp_data);
+    fin_gif.read(&temp_data, 1);
+    delay = (static_cast<std::uint16_t>(temp_data) << 8) & delay;
 
     //// Getting transparency color index
     fin_gif.read(&temp_data, 1);
@@ -70,7 +72,7 @@ std::string graphic_extension::get_data() const {
 
     //// Adding delay to data
     result = std::to_string(delay);
-    while (result.length() < 3) result = '0' + result;
+    while (result.length() < 5) result = '0' + result;
 
     //// Adding transparency flag
     if(transparency) result = '1' + result;
@@ -83,8 +85,8 @@ std::string graphic_extension::get_data() const {
     //// Adding disposal method info
     result = std::to_string(static_cast<std::uint8_t>(dis_met)) + result;
 
-    //// Adding delay info
-    result += std::to_string(delay);
+    //// Adding background color index
+    result += std::to_string(transparency_index);
 
     return result;
 }
@@ -126,28 +128,28 @@ plaintext_extension::plaintext_extension(const gif_extension * gif_parent) : gif
     std::string tmp_data = gif_parent->get_data();
 
     //// Setting left_pos
-    left_pos = std::stoi(tmp_data.substr(0, 3));
+    left_pos = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(0, 3)));
 
     //// Setting top_pos
-    top_pos = std::stoi(tmp_data.substr(3, 3));
+    top_pos = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(3, 3)));
 
     //// Setting grid_width
-    grid_width = std::stoi(tmp_data.substr(6, 3));
+    grid_width = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(6, 3)));
 
     //// Setting grid_height
-    grid_height = std::stoi(tmp_data.substr(9, 3));
+    grid_height = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(9, 3)));
 
     //// Setting cell_width
-    cell_width = std::stoi(tmp_data.substr(12, 3));
+    cell_width = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(12, 3)));
 
     //// Setting cell_height
-    cell_height = std::stoi(tmp_data.substr(15, 3));
+    cell_height = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(15, 3)));
 
     //// Setting color_index
-    color_index = std::stoi(tmp_data.substr(18, 3));
+    color_index = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(18, 3)));
 
     //// Setting background_index
-    background_index = std::stoi(tmp_data.substr(21, 3));
+    background_index = static_cast<std::uint8_t>(std::stoi(tmp_data.substr(21, 3)));
 
     //// Setting text_data
     text_data = tmp_data.substr(24);
@@ -301,7 +303,8 @@ void application_extension::read_data(std::ifstream & fin_gif) {
 
     //// Checking data block size
     fin_gif.read(&temp_byte, 1);
-    for(std::size_t i{0}; i < static_cast<std::size_t>(temp_byte); i++) {
+    std::size_t data_size = static_cast<std::size_t>(temp_byte);
+    for(std::size_t i{0}; i < data_size; i++) {
         fin_gif.read(&temp_byte, 1);
         app_data.push_back(temp_byte);
     }

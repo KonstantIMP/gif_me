@@ -186,11 +186,28 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                 frame->read_data(gif); frames.push_back(std::unique_ptr<gif_frame>(frame));
 
                 if(debug) {
-                    std::clog << "\tFrame descriptor\n";
+                    std::clog << "\tFrame descriptor\n\n";
+
                     std::clog << "\tLeft align : " << frame->get_frame_d().left << '\n';
                     std::clog << "\tTop align : " << frame->get_frame_d().top << '\n';
                     std::clog << "\tFrame width : " << frame->get_frame_d().width << '\n';
                     std::clog << "\tFrame height : " << frame->get_frame_d().height << '\n';
+
+                    std::clog << "\tLocalColorTable using : " << (frame->get_frame_d().use_lct ? "YSE" : "NO") << '\n';
+
+                    std::clog << "\tInterlacing : " << (frame->get_frame_d().is_interlaced ? "YSE" : "NO") << '\n';
+
+                    std::clog << "\tLocalColorTable sort : " << (frame->get_frame_d().sort_flag ? "YES" : "NO") << '\n';
+
+                    std::clog << "\tLocalColorTable size : " << static_cast<std::uint16_t>(frame->get_frame_d().lct_size) << "\n\n";
+
+                    if(frame->get_frame_d().use_lct) {
+                        std::clog << "\tLocalColorTable\n";
+                        for (auto & iter : frame->get_lct_ref()) {
+                            std::clog << "\tr : " << iter->r << "\tg : " << iter->g << "\tb : " << iter->b << "\t\talpha : " << iter->a << '\n';
+                        }
+                        std::clog << '\n';
+                    }
                 }
 
                 return;

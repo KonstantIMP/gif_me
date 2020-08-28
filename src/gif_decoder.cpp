@@ -106,7 +106,7 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
             gif.read(data, 1);
 
             if(data[0] == static_cast<char>(EXTENSION_BLOCK)) {
-                if(debug) std::clog << "[DEBUG] Found extension block\n";
+                if(debug) std::clog << "[DEBUG] Found extension block\n\n";
 
                 std::memset(data, 0, 2); gif.read(data, 1);
 
@@ -208,9 +208,11 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                         }
                         std::clog << '\n';
                     }
-                }
 
-                return;
+                    std::clog << "\tMinimum LWZ code size : " << frame->get_lwz_code_size() << "\n\n";
+
+                    std::clog << "\tLWZ data block size : " << frame->get_lwz_data_ref().size() << "\n\n";
+                }
             }
             else if(data[0] == static_cast<char>(GIF_EOF_BLOCK)) {
                 if(debug) std::clog << "[DEBUG] GIF_EOF found. Decoded\n";

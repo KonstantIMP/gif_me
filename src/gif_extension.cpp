@@ -55,7 +55,7 @@ void graphic_extension::read_data(std::ifstream & fin_gif) {
     fin_gif.read(&temp_data, 1);
     delay = static_cast<std::uint16_t>(temp_data);
     fin_gif.read(&temp_data, 1);
-    delay = (static_cast<std::uint16_t>(temp_data) << 8) & delay;
+    delay = static_cast<std::uint16_t>((static_cast<std::uint16_t>(temp_data) << 8) | static_cast<std::uint16_t>(delay));
 
     //// Getting transparency color index
     fin_gif.read(&temp_data, 1);
@@ -104,14 +104,17 @@ comment_extension::comment_extension(const gif_extension * gif_parent) : gif_ext
 
 void comment_extension::read_data(std::ifstream & fin_gif) {
     //// Temp character for data reading
-    char character = 0;
+    char character = 0; comment_msg = "";
 
     //// Read data before 0x00 byte
     while (1) {
         fin_gif.read(&character, 1);
-
         if(character == 0x00) return;
-        comment_msg += character;
+
+        std::size_t sub_size = static_cast<std::size_t>(static_cast<std::uint8_t>(character));
+        for(std::size_t i{0}; i < sub_size; i++) {
+            fin_gif.read(&character, 1); comment_msg += character;
+        }
     }
 }
 
@@ -213,7 +216,10 @@ void plaintext_extension::read_data(std::ifstream & fin_gif) {
         fin_gif.read(&temp_data, 1);
         if(temp_data == 0x00) break;
 
-        text_data += temp_data;
+        std::size_t sub_size = static_cast<std::size_t>(static_cast<std::uint16_t>(temp_data));
+        for(std::size_t i{0}; i < sub_size; i++) {
+            fin_gif.read(&temp_data, 1); text_data += temp_data;
+        }
     }
 }
 

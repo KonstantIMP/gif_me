@@ -17,5 +17,9 @@ int main(int argc, char * argv[]) {
 
     first.decode(true);
 
+    while (1) {
+
+    }
+
     return 0;
 }

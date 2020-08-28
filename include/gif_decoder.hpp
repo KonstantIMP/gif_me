@@ -365,6 +365,7 @@ private:
  * Child class for KonstantIMP::gif_extension for containing comment extensions
  */
 class comment_extension : public gif_extension {
+public:
     /**
      * @brief comment_extension
      *
@@ -430,6 +431,7 @@ private:
  * Child class for KonstantIMP::gif_extension for containing plain text extensions
  */
 class plaintext_extension : public gif_extension {
+public:
     /**
      * @brief plaintext_extension
      *

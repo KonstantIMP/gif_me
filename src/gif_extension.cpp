@@ -1,5 +1,7 @@
 #include "../include/gif_decoder.hpp"
 
+#include <array>
+
 namespace KonstantIMP {
 
 graphic_extension::graphic_extension(const gif_extension * gif_parent) : gif_extension(),
@@ -307,17 +309,40 @@ void application_extension::read_data(std::ifstream & fin_gif) {
         app_code += temp_byte;
     }
 
-    //// Checking data block size
-    fin_gif.read(&temp_byte, 1);
-    std::size_t data_size = static_cast<std::size_t>(temp_byte);
-    for(std::size_t i{0}; i < data_size; i++) {
-        fin_gif.read(&temp_byte, 1);
-        app_data.push_back(temp_byte);
-    }
+    //// XMP extension checking
+    if(app_code == "XMP" && app_name == "XMP Data") {
+        std::array<char, 258> magic_trailer;
+        magic_trailer[0] = static_cast<char>(0x01); char block = static_cast<char>(0xff);
 
-    //// Terminate check
-    fin_gif.read(&temp_byte, 1);
-    if(temp_byte != 0x00) throw std::runtime_error("Extension must be terminated by 0x00");
+        for(std::size_t i{1}; i <= 256; i++) {
+            magic_trailer[i] = block;
+            block--;
+        } magic_trailer[257] = 0x00;
+
+        std::array<char, 258> data;
+        data.fill(0x00);
+
+        fin_gif.read(&data[0], 258);
+        while (1) {
+            if(data == magic_trailer) break;
+            app_data.push_back(data[0]);
+            for(std::size_t i{0}; i < 257; i++) data[i] = data[i + 1];
+            fin_gif.read(&data[257], 1);
+        }
+    }
+    else {
+        //// Checking data block size
+        while (1) {
+            fin_gif.read(&temp_byte, 1);
+            if(temp_byte == 0x00) break;
+
+            std::size_t data_size = static_cast<std::size_t>(static_cast<std::uint16_t>(temp_byte));
+            for(std::size_t i{0}; i < data_size; i++) {
+                fin_gif.read(&temp_byte, 1);
+                app_data.push_back(temp_byte);
+            }
+        }
+    }
 }
 
 std::string application_extension::get_data() const {

@@ -111,7 +111,28 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                 std::memset(data, 0, 2); gif.read(data, 1);
 
                 if(data[0] == static_cast<char>(PLAITEXT_EXTENSION)) {
-                    return;
+                    if(debug) std::clog << "\tExtension type : plaintext extension\n\n";
+
+                    gif_extension * tmp = new plaintext_extension;
+                    tmp->read_data(gif); extensions.push_back(std::unique_ptr<gif_extension>(tmp));
+
+                    if(debug) {
+                        plaintext_extension text(tmp);
+
+                        std::clog << "\tLeft text align : " << static_cast<std::uint16_t>(text.get_left_pos()) << '\n';
+                        std::clog << "\tTop text align : " << static_cast<std::uint16_t>(text.get_top_pos()) << "\n\n";
+
+                        std::clog << "\tGrid width : " << static_cast<std::uint16_t>(text.get_grid_width()) << '\n';
+                        std::clog << "\tGrid height : " << static_cast<std::uint16_t>(text.get_grid_height()) << "\n\n";
+
+                        std::clog << "\tCell width : " << static_cast<std::uint16_t>(text.get_cell_width()) << '\n';
+                        std::clog << "\tCell height : " << static_cast<std::uint16_t>(text.get_cell_height()) << "\n\n";
+
+                        std::clog << "\tText color index : " << static_cast<std::uint16_t>(text.get_color_index()) << '\n';
+                        std::clog << "\tBackground color index : " << static_cast<std::uint16_t>(text.get_background_index()) << "\n\n";
+
+                        std::clog << "\tText data : " << text.get_text_data() << "\n\n";
+                    }
                 }
                 else if(data[0] == static_cast<char>(GRAPHIC_EXTENSION)) {
                     if(debug) std::clog << "\tExtension type : graphics control extension\n\n";

@@ -1,6 +1,4 @@
-#include "../include/gif_decoder.hpp"
-
-#include <iostream>
+#include "../include/gif_frame.hpp"
 
 namespace KonstantIMP {
 

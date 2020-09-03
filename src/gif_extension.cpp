@@ -1,4 +1,4 @@
-#include "../include/gif_decoder.hpp"
+#include "../include/gif_extension.hpp"
 
 #include <array>
 

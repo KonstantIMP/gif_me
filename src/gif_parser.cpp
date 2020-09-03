@@ -1,8 +1,8 @@
-#include "../include/gif_decoder.hpp"
+#include "../include/gif_parser.hpp"
 
 #include <iostream>
 
-void KonstantIMP::gif_decoder::decode(const bool & debug) {
+void KonstantIMP::gif_parser::parse(const bool & debug) {
     if(debug) std::clog << "[DEBUG] Decoding start\n";
 
     if(!gif.is_open()) {
@@ -161,7 +161,15 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                     }
                 }
                 else if(data[0] == static_cast<char>(COMMENT_EXTENSION)) {
-                    return;
+                    if(debug) std::clog << "\tExtension type : graphics control extension\n\n";
+
+                    gif_extension * tmp = new comment_extension;
+                    tmp->read_data(gif); extensions.push_back(std::unique_ptr<gif_extension>(tmp));
+
+                    if(debug) {
+                        comment_extension com(tmp);
+                        std::clog << "\tComment message : " << com.get_comment_msg() << "\n\n";
+                    }
                 }
                 else if(data[0] == static_cast<char>(PROGRAM_EXTENSION)) {
                     if(debug) std::clog << "\tExtension type : application extension\n\n";
@@ -225,7 +233,7 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                     if(frame->get_frame_d().use_lct) {
                         std::clog << "\tLocalColorTable\n";
                         for (auto & iter : frame->get_lct_ref()) {
-                            std::clog << "\tr : " << iter->r << "\tg : " << iter->g << "\tb : " << iter->b << "\t\talpha : " << iter->a << '\n';
+                            std::clog << "\tr : " << static_cast<std::uint16_t>(iter->r) << "\tg : " << static_cast<std::uint16_t>(iter->g) << "\tb : " << static_cast<std::uint16_t>(iter->b) << "\t\talpha : " << iter->a << '\n';
                         }
                         std::clog << '\n';
                     }
@@ -236,12 +244,17 @@ void KonstantIMP::gif_decoder::decode(const bool & debug) {
                 }
             }
             else if(data[0] == static_cast<char>(GIF_EOF_BLOCK)) {
-                if(debug) std::clog << "[DEBUG] GIF_EOF found. Decoded\n";
+                if(debug) {
+                    std::clog << "[DEBUG] GIF_EOF found.\n";
+
+                    std::clog << "\tExtensions num : " << extensions.size() << '\n';
+                    std::clog << "\tFrames num : " << frames.size() << "\n\n[DEBUG] Decoded\n";
+                }
                 return;
             }
             else {
-                if(debug) std::clog << "[DEBUG] Found UNSPEC extension\n";
-                throw std::runtime_error("Found UNSPEC extension");
+                if(debug) std::clog << "[DEBUG] Found UNSPEC data block\n";
+                throw std::runtime_error("Found UNSPEC data block");
             }
         }
     }

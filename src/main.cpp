@@ -1,7 +1,7 @@
-#include "../include/gif_decoder.hpp"
-#include <iostream>
+#include "../include/gif_me.hpp"
 
-using namespace std;
+#include <iostream>
+#include <gtkmm.h>
 
 int main(int argc, char * argv[]) {
     std::cout << "Hello!\n";
@@ -13,13 +13,9 @@ int main(int argc, char * argv[]) {
 
     std::cout << "Let\'s decode \"" << argv[1] << "\"\n\n";
 
-    KonstantIMP::gif_decoder first(argv[1]);
+    KonstantIMP::gif_parser first(argv[1]);
 
-    first.decode(true);
-
-    while (1) {
-
-    }
+    first.parse(true);
 
     return 0;
 }

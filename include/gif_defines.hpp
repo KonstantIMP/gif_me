@@ -20,6 +20,8 @@
 
 #include <cmath>
 
+#include <map>
+
 namespace KonstantIMP {
 
 /// Gif versions enumaration

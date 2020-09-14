@@ -15,4 +15,6 @@
 
 #include "gif_parser.hpp"
 
+#include "gif_decoder.hpp"
+
 #endif //GIF_ME_HPP

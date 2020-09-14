@@ -17,5 +17,7 @@ int main(int argc, char * argv[]) {
 
     first.parse(true);
 
+    KonstantIMP::gif_decoder::decode(*first.get_frames_ref().at(0), first.get_gtc_ref(), true);
+
     return 0;
 }

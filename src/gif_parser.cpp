@@ -3,7 +3,7 @@
 #include <iostream>
 
 void KonstantIMP::gif_parser::parse(const bool & debug) {
-    if(debug) std::clog << "[DEBUG] Decoding start\n";
+    if(debug) std::clog << "[DEBUG] Parsing start\n";
 
     if(!gif.is_open()) {
         if(debug) std::clog << "[DEBUG] GIF hasn\'t opened yet\n";
@@ -13,9 +13,9 @@ void KonstantIMP::gif_parser::parse(const bool & debug) {
 
     gif.seekg(0);
 
-    //// GIF HEADER DECODING BLOCK
+    //// GIF HEADER parsING BLOCK
     {
-        if(debug) std::clog << "[DEBUG] Header decoding\n";
+        if(debug) std::clog << "[DEBUG] Header parsing\n";
 
         char data[3]; std::memset(data, 0, 3);
         gif.read(data, 3);
@@ -70,9 +70,9 @@ void KonstantIMP::gif_parser::parse(const bool & debug) {
         head.aspect_ratio = static_cast<std::uint8_t>(data[0]);
         if(debug) std::clog << "\tAspect ratio is : " << static_cast<double>(static_cast<double>(head.aspect_ratio + 15) / static_cast<double>(64)) << " (" << (static_cast<std::uint8_t>(head.aspect_ratio) & 0x00ff) << ")\n\n";
     }
-    //// GIF HEADER DECODING BLOCK
+    //// GIF HEADER parsING BLOCK
 
-    //// GCT DECODING BLOCK
+    //// GCT parsING BLOCK
     {
         if(head.gct_flag) {
             if(debug) std::clog << "[DEBUG] GlobalColorTable (" << head.gct_size << " colors)\n";
@@ -95,11 +95,11 @@ void KonstantIMP::gif_parser::parse(const bool & debug) {
         }
         else if(debug) std::clog << "[DEBUG] GlobalColorTable doesn\'t exist\n\n";
     }
-    //// GCT DECODING BLOCK
+    //// GCT parsING BLOCK
 
-    //// MAIN GIF PART DECODING BLOCK
+    //// MAIN GIF PART parsING BLOCK
     {
-        if(debug) std::clog << "[DEBUG] Main GIF part decoding\n\n";
+        if(debug) std::clog << "[DEBUG] Main GIF part parsing\n\n";
 
         while (!gif.eof()) {
             char data[2]; std::memset(data, 0, 2);
@@ -248,7 +248,7 @@ void KonstantIMP::gif_parser::parse(const bool & debug) {
                     std::clog << "[DEBUG] GIF_EOF found.\n";
 
                     std::clog << "\tExtensions num : " << extensions.size() << '\n';
-                    std::clog << "\tFrames num : " << frames.size() << "\n\n[DEBUG] Decoded\n";
+                    std::clog << "\tFrames num : " << frames.size() << "\n\n[DEBUG] Parsed\n\n";
                 }
                 return;
             }
@@ -258,5 +258,5 @@ void KonstantIMP::gif_parser::parse(const bool & debug) {
             }
         }
     }
-    //// MAIN GIF PART DECODING BLOCK
+    //// MAIN GIF PART parsING BLOCK
 }

@@ -17,5 +17,5 @@ if(NOT CMAKE_CXX_EXTENSIONS)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
-add_executable(gif_me src/main.cpp include/gif_me.hpp include/gif_defines.hpp include/gif_extension.hpp include/gif_frame.hpp include/gif_parser.hpp src/gif_parser.cpp src/gif_extension.cpp src/gif_frame.cpp)
+add_executable(gif_me src/main.cpp include/gif_me.hpp include/gif_defines.hpp include/gif_extension.hpp include/gif_frame.hpp include/gif_parser.hpp src/gif_parser.cpp src/gif_extension.cpp src/gif_frame.cpp include/gif_decoder.hpp src/gif_decoder.cpp)
 target_link_libraries(gif_me ${GTKMM_LIBRARIES})

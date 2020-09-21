@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.0, 2020-09-14T23:02:58. -->
+<!-- Written by QtCreator 4.13.1, 2020-09-21T23:24:21. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -370,7 +370,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">gif_me</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.gif_me</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">gif_me</value>
-    <value type="QString" key="RunConfiguration.Arguments">/home/konstantimp/Projects/gif_me/test/2.gif</value>
+    <value type="QString" key="RunConfiguration.Arguments">/home/konstantimp/.build/gif-decoder/build/test.gif</value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

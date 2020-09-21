@@ -94,8 +94,8 @@ public:
      *
      * @return lwz_data vector ref
      */
-    inline std::vector<char> & get_lwz_data_ref() const {
-        return const_cast<std::vector<char> &>(lwz_data);
+    inline std::vector<unsigned char> & get_lwz_data_ref() const {
+        return const_cast<std::vector<unsigned char> &>(lwz_data);
     }
 
     /**
@@ -120,7 +120,7 @@ private:
     std::size_t lwz_code_size;
 
     //// Compressed using LWZ data
-    std::vector<char> lwz_data;
+    std::vector<unsigned char> lwz_data;
 };
 
 }

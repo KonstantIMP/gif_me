@@ -24,7 +24,7 @@ public:
      * @param{in} debug See debug output
      * @return Already decoded frame (array from array from rgba_color)
      */
-    static std::vector<std::vector<rgba_color>> decode(gif_frame & frame, std::vector<std::unique_ptr<rgba_color>> & gct, const bool & debug = false);
+    static std::vector<rgba_color> decode(gif_frame & frame, std::vector<std::unique_ptr<rgba_color>> & gct, const bool & debug = false);
 };
 
 }
